@@ -1,24 +1,31 @@
-if [ ! -f \"/installed\" ]
+if [ ! -f "/installed" ]
 then
-    echo \"#!/usr/bin/env bash\" > /hooks/laravel_after
-    echo \"set -e\" >> /hooks/laravel_after
-    echo \${HOOK_BEFORE_SCRIPT} >> /hooks/laravel_after && chmod +x /hooks/laravel_after && /hooks/laravel_after
+    echo "#!/usr/bin/env bash" > /hooks/laravel_after
+    echo "set -e" >> /hooks/laravel_after
+    echo ${HOOK_BEFORE_SCRIPT} >> /hooks/laravel_after && chmod +x /hooks/laravel_after && /hooks/laravel_after
     HOOK_BEFORE_SCRIPT=null
-    echo Checking out branch: \${BRANCH}
-    git clone --progress --verbose https://x-access-token:\${TOKEN}@github.com/\${REPO} -b \${BRANCH} .
+    
+    echo "Checking out branch: ${BRANCH}"
+    git clone --progress --verbose https://x-access-token:${TOKEN}@github.com/${REPO} -b ${BRANCH} .
+    
+    echo "Installing dependencies"
     composer install -q --no-ansi --no-interaction --no-scripts --prefer-dist
+    
     chmod 777 -R /var/www/html/bootstrap/cache /var/www/html/storage
-    echo \"Installing npm modules\"
+    
+    echo "Installing npm modules"
     npm install
-    echo \"Compiling npm modules\"
+    
+    echo "Compiling npm modules"
     npm run prod
     
-    if \php artisan list | grep asset-cdn
+    if php artisan list | grep asset-cdn
     then
       php artisan asset-cdn:push
     fi
     
     php artisan migrate --force
     php artisan db:seed --force
+    
     echo true > /installed
 fi

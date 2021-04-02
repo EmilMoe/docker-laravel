@@ -6,7 +6,7 @@ then
     HOOK_BEFORE_SCRIPT=null
     
     echo "Checking out branch: ${BRANCH}"
-    git clone --progress --verbose https://x-access-token:${TOKEN}@github.com/${REPO} -b ${BRANCH} .
+    git clone --progress https://x-access-token:${TOKEN}@github.com/${REPO} -b ${BRANCH} .
     
     echo "Installing dependencies"
     composer install -q --no-ansi --no-interaction --no-scripts --prefer-dist

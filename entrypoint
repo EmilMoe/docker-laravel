@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+rm -f /run/apache2/apache2.pid
+
 if [ ! -f "/installed" ]
 then
     echo "#!/usr/bin/env bash" > /hooks/laravel_after
@@ -29,3 +34,5 @@ then
     
     echo true > /installed
 fi
+
+exec apache2ctl -DFOREGROUND "$@"

@@ -4,7 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Copenhagen
 ENV BRANCH master
 
-RUN apt-get update && apt-get upgrade -yq 
+COPY entrypoint /usr/local/bin/entrypoint
+
+RUN apt-get update && apt-get upgrade -yq
 
 RUN apt-get install -qy \
     git \
@@ -53,12 +55,6 @@ RUN apt-get install -qy \
     && chgrp -R www-data /var/www/html/ \
     && chmod 775 -R /var/www/html \
     
-    && { \
-        echo "#!/usr/bin/env bash"; \
-        echo "set -e"; \
-        echo "rm -f /run/apache2/apache2.pid"; \
-        echo "exec apache2ctl -DFOREGROUND \"\$@\""; \
-    } > /usr/local/bin/entrypoint \
     && chmod a+rx /usr/local/bin/entrypoint \
     && apt-get -yq clean autoclean && apt-get -yq autoremove \
     && rm -rf /var/lib/apt/lists/*
